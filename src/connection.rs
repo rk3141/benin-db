@@ -16,14 +16,28 @@ impl ConnectionHandle {
                 req.read_to_string(&mut message).expect("read err");
                 println!("Message: {:?}", message);
 
+                message.pop(); // remove \n chars
+
                 let params = message.split(' ').collect::<Vec<&str>>();
 
                 if let Some((&command, rest)) = params.split_first() {
                     match command {
                         "set" => {
-                            if let Some((&key, [value, _])) = rest.split_first() {
+                            println!("Seting... {:?}", rest);
+
+                            let mut set_params = rest.into_iter();
+
+                            if let Some(key) = set_params.next() {
+                                let mut value = String::new();
+
+                                for val in set_params {
+                                    value += (val.to_string() + " ").as_str();
+                                }
+
+                                value.pop();
+
                                 hashmap.insert(key.to_string(), value.to_string());
-                            } else {
+                                println!("Hashmap: {:?}", hashmap);
                             }
                         }
                         _ => {}
