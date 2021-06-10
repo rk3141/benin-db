@@ -3,7 +3,7 @@ use std::collections::HashMap;
 mod connection;
 
 fn main() {
-    let mut kv_map = HashMap::new();
+    let mut kv_map = (HashMap::new());
 
     connection::ConnectionHandle {
         host: "127.0.0.1".to_string(),

@@ -1,4 +1,6 @@
-use std::{collections::HashMap, io::Read, net::TcpListener};
+use std::{
+    collections::HashMap, io::Read, net::TcpListener, ops::Deref, rc::Rc, sync::Mutex, thread,
+};
 
 pub struct ConnectionHandle {
     pub port: u16,
@@ -16,7 +18,7 @@ impl ConnectionHandle {
                 req.read_to_string(&mut message).expect("read err");
                 println!("Message: {:?}", message);
 
-                message.pop(); // remove \n chars
+                message = message.trim().to_string(); // remove \n chars
 
                 let params = message.split(' ').collect::<Vec<&str>>();
 
