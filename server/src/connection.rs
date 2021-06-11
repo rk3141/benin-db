@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
-    io::Read,
-    net::{TcpListener, TcpStream},
+    io::{Read, Write},
+    net::TcpListener,
     sync::{Arc, Mutex},
     thread,
 };
@@ -44,7 +44,8 @@ impl ConnectionHandle {
                                     value += (val.to_string() + " ").as_str();
                                 }
 
-                                value.pop();
+                                value = value.trim().to_string();
+
                                 (*hashmap).insert(key.to_string(), value.to_string());
                             }
                         }

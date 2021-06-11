@@ -1,12 +1,12 @@
 use std::{
-    io::{stdin, stdout, Read, Write},
+    io::{stdin, stdout, Write},
     net::{Shutdown, TcpStream},
 };
 
 fn prompt(prompt: &str) -> String {
     let mut buff = String::new();
 
-    print!("{}", prompt);
+    print!("\x1b[0m{}", prompt);
     stdout().flush().unwrap();
 
     stdin().read_line(&mut buff).unwrap();
@@ -16,7 +16,8 @@ fn prompt(prompt: &str) -> String {
 }
 
 fn main() {
-    while let input = prompt("> ") {
+    loop {
+        let input = prompt("> \x1b[32m");
         if input == "exit" {
             break;
         }
@@ -25,6 +26,7 @@ fn main() {
         }
         let mut connection = TcpStream::connect("127.0.0.1:5050").expect("Couldnt Connect");
         connection.write(input.as_bytes()).unwrap();
-        connection.shutdown(Shutdown::Both);
+
+        connection.shutdown(Shutdown::Both).unwrap();
     }
 }
