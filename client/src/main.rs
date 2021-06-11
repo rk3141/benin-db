@@ -1,40 +1,30 @@
 use std::{
     io::{stdin, stdout, Read, Write},
-    net::TcpStream,
-    sync::{Arc, Mutex},
-    thread,
-    time::Duration,
+    net::{Shutdown, TcpStream},
 };
 
+fn prompt(prompt: &str) -> String {
+    let mut buff = String::new();
+
+    print!("{}", prompt);
+    stdout().flush().unwrap();
+
+    stdin().read_line(&mut buff).unwrap();
+    buff = buff.trim().to_string();
+
+    buff
+}
+
 fn main() {
-    // TcpStream::connect("127.0.0.1:5050").expect("Couldnt Connect");
-
-    // let mut buff = String::new();
-
-    // print!("Enter your message: ");
-    // stdout().flush();
-
-    // stdin().read_line(&mut buff);
-    // buff = buff.trim().to_string();
-
-    // println!("{:?}", buff);
-
-    let counter = Arc::new(Mutex::new(0));
-    let mut handles = vec![];
-
-    for _ in 0..10 {
-        let counter = Arc::clone(&counter);
-        let handle = thread::spawn(move || {
-            let mut num = counter.lock().unwrap();
-
-            *num += 2;
-        });
-        handles.push(handle);
+    while let input = prompt("> ") {
+        if input == "exit" {
+            break;
+        }
+        if input == "" {
+            continue;
+        }
+        let mut connection = TcpStream::connect("127.0.0.1:5050").expect("Couldnt Connect");
+        connection.write(input.as_bytes()).unwrap();
+        connection.shutdown(Shutdown::Both);
     }
-
-    for handle in handles {
-        handle.join().unwrap();
-    }
-
-    println!("Result: {}", *counter.lock().unwrap());
 }
