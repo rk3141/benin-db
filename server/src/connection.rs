@@ -2,70 +2,14 @@ use std::{
     collections::HashMap,
     io::Read,
     net::{TcpListener, TcpStream},
-    sync::{
-        mpsc::{self, Receiver, Sender},
-        Arc, Mutex,
-    },
+    sync::{Arc, Mutex},
     thread,
 };
-
-// type Job = Box<dyn FnOnce() + Send + 'static>;
 
 pub struct ConnectionHandle {
     pub port: u16,
     pub host: String,
 }
-
-// struct ThreadPool {
-//     workers: Vec<Worker>,
-//     sender: mpsc::Sender<Job>,
-// }
-
-// struct Worker {
-//     id: usize,
-//     thread: thread::JoinHandle<()>,
-// }
-
-// impl Worker {
-//     pub fn new(id: usize, receiver: Arc<Mutex<Receiver<Job>>>) -> Self {
-//         let thread = thread::spawn(move || loop {
-//             let job = receiver.lock().unwrap().recv().unwrap();
-
-//             println!("Worker {} working", id);
-
-//             job();
-//         });
-
-//         Self { id, thread }
-//     }
-// }
-
-// impl ThreadPool {
-//     pub fn new(size: usize) -> Self {
-//         assert!(size > 0);
-
-//         let (sender, receiver) = mpsc::channel();
-
-//         let receiver = Arc::new(Mutex::new(receiver));
-
-//         let mut workers = Vec::with_capacity(size);
-
-//         for id in 0..size {
-//             workers.push(Worker::new(id, Arc::clone(&receiver)));
-//         }
-
-//         Self { workers, sender }
-//     }
-
-//     pub fn execute<F>(&self, f: F)
-//     where
-//         F: FnOnce() + Send + 'static,
-//     {
-//         let job = Box::new(f);
-
-//         self.sender.send(job).unwrap();
-//     }
-// }
 
 impl ConnectionHandle {
     pub fn start(self, hashmap: Arc<Mutex<HashMap<String, String>>>) {
