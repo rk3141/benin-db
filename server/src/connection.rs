@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     io::{Read, Write},
-    net::TcpListener,
+    net::{TcpListener, TcpStream},
     sync::{Arc, Mutex},
     thread,
 };
@@ -33,8 +33,6 @@ impl ConnectionHandle {
                 if let Some((&command, rest)) = params.split_first() {
                     match command {
                         "set" => {
-                            println!("Seting... {:?}", rest);
-
                             let mut set_params = rest.into_iter();
 
                             if let Some(key) = set_params.next() {
@@ -47,6 +45,21 @@ impl ConnectionHandle {
                                 value = value.trim().to_string();
 
                                 (*hashmap).insert(key.to_string(), value.to_string());
+                            }
+                        }
+                        "get" => {
+                            println!("Getting");
+                            if let Some(what) = rest.first() {
+                                println!("Getting {:?}", what);
+
+                                if let Some(value) = (*hashmap).get(&what.to_string()) {
+                                    println!("Got {:?} from {:?}", value, what);
+                                    // req.write(value.as_bytes()).unwrap();
+
+                                    TcpStream::connect(req.peer_addr().unwrap())
+                                        .unwrap()
+                                        .write(b"OK");
+                                }
                             }
                         }
                         _ => {}

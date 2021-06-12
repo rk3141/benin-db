@@ -1,6 +1,7 @@
 use std::{
-    io::{stdin, stdout, Write},
+    io::{stdin, stdout, Read, Write},
     net::{Shutdown, TcpStream},
+    thread,
 };
 
 fn prompt(prompt: &str) -> String {
@@ -26,6 +27,14 @@ fn main() {
         }
         let mut connection = TcpStream::connect("127.0.0.1:5050").expect("Couldnt Connect");
         connection.write(input.as_bytes()).unwrap();
+
+        if input.split(" ").collect::<Vec<&str>>().first() == Some(&"get") {
+            println!("waiting...");
+            let mut value = [0; 16];
+            connection.read_exact(&mut value).unwrap();
+
+            println!("{:?}", value);
+        }
 
         connection.shutdown(Shutdown::Both).unwrap();
     }
